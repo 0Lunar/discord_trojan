@@ -8,6 +8,7 @@ try:
     from discord.ext import commands
     from discord import DMChannel
     import pytube
+    import pyautogui
 except ModuleNotFoundError:
     r = os.system("pip3 install discord_webhook")
     if(r == 1):
