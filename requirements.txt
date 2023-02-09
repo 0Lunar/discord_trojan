@@ -2,3 +2,4 @@ requests
 discord_webhook
 opencv-python
 discord
+pyautogui
