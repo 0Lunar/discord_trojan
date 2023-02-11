@@ -32,12 +32,14 @@ def check():
             os.system("pip install opencv-python")
             os.system("pip install pytube")
             os.system("pip install pyautogui")
+            os.system("pip install Pillow")
     else:
         os.system("pip3 install requests")
         os.system("pip3 install discord")
         os.system("pip3 install opencv-python")
         os.system("pip3 install pytube")
         os.system("pip3 install pyautogui")
+        os.system("pip3 install Pillow")
     if(platform.system() == "Linux"):
         l = os.system("sudo apt-get install scrot -y")
         if(l == 1):
