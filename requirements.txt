@@ -3,3 +3,4 @@ discord_webhook
 opencv-python
 discord
 pyautogui
+Pillow
