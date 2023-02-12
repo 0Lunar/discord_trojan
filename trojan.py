@@ -15,8 +15,8 @@ except ModuleNotFoundError:
 #url
 
 public_ip = "https://checkip.amazonaws.com"
-Webhook_url = "https://discord.com/api/webhooks/1065380357526016020/w1WvYwseIsMiUYr5KKfabUwRYPK0IRoPTNFzTBHzDapsNOmG58bHLx71X__VXmQLcBH4"
-discord_bot_token = 'MTA2MTAyNjc5ODY5NzE5MzU3Mg.GVf8iu.qVYjaLpybntIexXIgwkmbOyGFpfum_l7E9iWoQ'
+Webhook_url = "webhook url"
+discord_bot_token = 'discord bot token'
 
 #end url
 
