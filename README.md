@@ -12,3 +12,8 @@ pip3 install -r requirements.txt
 # usage
 
 python3 trojan.py
+
+# os
+
+ - Windows
+ - Linux
