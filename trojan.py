@@ -175,7 +175,7 @@ async def clear(ctx, amount=1000000000):
 @commands.has_permissions(administrator=True)
 async def power_off(ctx):
     await ctx.send("powering off the pc")
-    if(platform.system == "Windows"):
+    if(platform.system() == "Windows"):
         os.system("shutdown /s /t 00")
     else:
         os.system("shutdown -r now")
